@@ -9,11 +9,17 @@ RUN \
 apt-get clean && \
 apt-get update
 
+# Install nmap
+RUN apt-get install -y nmap
+
 # Install perl
 RUN apt-get install -y perl
 
 # Install slowloris dependency
 RUN apt-get install -y libwww-mechanize-shell-perl
+
+# Install curl
+RUN apt-get update && apt-get install -y curl
 
 # Set Workdir
 WORKDIR /opt/slowloriax
@@ -22,7 +28,7 @@ WORKDIR /opt/slowloriax
 COPY . .
 
 # Entrypoint
-ENTRYPOINT ["sh", "entrypoint.sh"]
+ENTRYPOINT ["bash", "entrypoint.sh"]
 
 # Command
 # CMD ["tail", "-F", "/var/log/syslog", "/var/log/cron.log"]
